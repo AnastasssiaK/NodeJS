@@ -70,7 +70,7 @@ readStream.on('data', chunk => {
   console.log(chunk);
   console.log('__________________________');
 
-  writeStream.write(chunk);
+//   writeStream.write(chunk);
 });
 
 readStream.on('end', () => {
