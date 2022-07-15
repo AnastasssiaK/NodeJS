@@ -1,8 +1,8 @@
 const express = require('express');
-const axios = require('axios');
+const mongoose = require('mongoose');
 
-const users = require('./database/users');
-const userController = require('./controllers/user.controller');
+mongoose.connect('mongodb://localhost:27017/test');
+
 const userRouter = require('./routes/user.router');
 
 const app = express();
@@ -10,19 +10,21 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.get('/', async (req, res) => {
-    console.log(req);
-
-    const resp = await axios.get('https://jsonplaceholder.typicode.com/users');
-
-    res.status(resp.status).json(resp.data);
-});
-
 app.use('./users', userRouter);
 
-app.use('*', (req,res) => {
+app.use('*', (req, res) => {
     req.status(404).json('Route not found');
-})
+});
+
+app.use((err, req, res, next) => {
+    res
+        .status(err.status || 500)
+        .json({
+            error: err.message || 'Unknown Error',
+            code: err.status || 500
+        });
+});
+
 
 app.listen(5000, () => {
     console.log('Server listen 5000')
