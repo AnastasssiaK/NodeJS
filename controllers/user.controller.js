@@ -4,7 +4,7 @@ const User = require('../database/User');
 async function getAllUsers(req, res, next) {
     try {
         const users = await User.find();
-
+        console.log(users)
         res.json(users);
     } catch (e) {
         next(e);

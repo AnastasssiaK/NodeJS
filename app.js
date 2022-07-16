@@ -1,8 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/test');
-
+mongoose.connect('mongodb+srv://Anastasssia_K:04parol03@cluster0.qcd9wxl.mongodb.net/?retryWrites=true&w=majority');
+// mongoose.connect('mongodb+srv://anastasssia_k:04parol03@cluster0.kvtrb.mongodb.net/?retryWrites=true&w=majority');
+//
 const userRouter = require('./routes/user.router');
 
 const app = express();
@@ -10,7 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-app.use('./users', userRouter);
+app.use('/users', userRouter);
 
 app.use('*', (req, res) => {
     req.status(404).json('Route not found');
