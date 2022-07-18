@@ -10,7 +10,7 @@ module.exports = {
        }
     },
 
-    createUser: async (req, res) => {
+    createUser: async (req, res, next) => {
        try {
            const newUser = await userService.createUser(req.body);
             res.status(201).json(newUser);
@@ -43,7 +43,7 @@ module.exports = {
             const {id} = req.params;
 
             await userService.deleteOneUser({_id: id});
-            res.sendStatus(204);
+            res.sendStatus(204).json('User was deleted');
         } catch (e) {
             next(e);
         }

@@ -6,9 +6,9 @@ const {userService} = require("../services");
 module.exports = {
     isUserPresent: async (req, res, next) => {
         try {
-            const {id} = req.params;
-            const  user = await userService.findOneUser({_id: id});
+            const { id } = req.params;
 
+            const user = await userService.findOneUser({ _id: id });
             if (!user) {
                 return next(new CustomError('User not found'));
             }
@@ -19,6 +19,7 @@ module.exports = {
             next(e);
         }
     },
+
     isUserUniq: async (req, res, next) => {
         try {
             const { email } = req.body;
@@ -37,20 +38,22 @@ module.exports = {
 
     isUserValidForCreate: async (req, res, next) => {
         try {
-            const {name, email, age, password} = req.body;
-            const  user = await userService.findOneUser({_id: id});
+            const { name, email, age, password } = req.body;
 
             if (!age || !Number.isInteger(age) || age < 18) {
                 return next(new CustomError('Set valid age'));
             }
+
             if (!name || name.length < 3) {
                 return next(new CustomError('Set valid name'));
             }
-            if (!email || email.includes('@')) {
+
+            if (!email || !email.includes('@')) {
                 return next(new CustomError('Set valid email'));
             }
-            if (!password || password.length < 8) {
-                return next(new CustomError('Set valid name'));
+
+            if (!password || name.password < 8) {
+                return next(new CustomError('Set valid password'));
             }
 
             next();
@@ -58,6 +61,7 @@ module.exports = {
             next(e);
         }
     },
+
     isUserValidForUpdate: async (req, res, next) => {
         try {
             const { name, age } = req.body;
@@ -76,4 +80,4 @@ module.exports = {
             next(e);
         }
     }
-}
+};
