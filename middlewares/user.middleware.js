@@ -1,18 +1,34 @@
 const CError = require('../error/CustomError');
+const userValidator = require('../validators/user.validator');
+const User = require("../database/User");
 
 module.exports = {
-    checkUserOnCreate: (req, res, next) => {
+    isNewUserValid: (req, res, next) => {
         try {
-            const {email = '', name = '', password = '', age = 0} = req.body;
-            if (!email || !password || !name) {
-                throw new CError('Some filed is missing', 400);
+            const {error, value} = userValidator.newUserValidator.validate(req.body);
+
+            if (error) {
+                throw new CError(error.details[0].message);
             }
-            if (password.length < 5) {
-                throw new CError('Password should include at least 5 symbols', 400);
-            }
-            next()
+
+            next();
         } catch (e) {
-            res.status(400).json(e.message);
+            next(e);
+        }
+    },
+    isEmailRegistered: async (req, res, next) => {
+        try {
+            const {email} = req.body;
+
+            const userByEmail = await User.findOne({email});
+
+            if (userByEmail) {
+                throw  new CError('User with such already registered');
+            }
+
+            next();
+        } catch (e) {
+            next(e);
         }
     }
 }
