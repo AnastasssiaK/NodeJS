@@ -2,9 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const { userRouter } = require('./routes');
-const { constants } = require('./configs');
+const {configs} = require('./configs');
 
-mongoose.connect('mongodb://localhost:27017/test');
+mongoose.connect('mongodb+srv://Anastasssia_K:04parol03@cluster0.qcd9wxl.mongodb.net/?retryWrites=true&w=majority');
+// mongoose.connect(configs.MONGO_URL);
 
 const app = express();
 app.use(express.json());
@@ -24,6 +25,6 @@ app.use((err, req, res, next) => {
         });
 });
 
-app.listen(constants.PORT, () => {
-    console.log(`Started on port ${constants.PORT}`);
+app.listen(configs.PORT, () => {
+    console.log(`Started on port ${configs.PORT}`);
 });
