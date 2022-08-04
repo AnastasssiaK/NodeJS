@@ -1,9 +1,10 @@
 const router = require('express').Router();
 
-const { userController } = require('../controllers');
-const { commonMiddleware, userMiddleware } = require('../middlewares');
+const {userController} = require('../controllers');
+const {commonMiddleware, userMiddleware} = require('../middlewares');
 
 router.get('/',
+    userMiddleware.isUserQueryValid,
     userController.findUsers);
 router.post('/',
     userMiddleware.isUserValidForCreate,

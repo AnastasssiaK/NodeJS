@@ -1,14 +1,13 @@
-const {Types} = require("mongoose");
-
 const {CustomError} = require("../errors");
 const {userService} = require("../services");
+const {userValidator, userQueryValidator} = require("../validators");
 
 module.exports = {
     isUserPresent: async (req, res, next) => {
         try {
-            const { id } = req.params;
+            const {id} = req.params;
 
-            const user = await userService.findOneUser({ _id: id });
+            const user = await userService.findOneUser({_id: id});
             if (!user) {
                 return next(new CustomError('User not found'));
             }
@@ -22,9 +21,9 @@ module.exports = {
 
     isUserUniq: async (req, res, next) => {
         try {
-            const { email } = req.body;
+            const {email} = req.body;
 
-            const user = await userService.findOneUser({ email });
+            const user = await userService.findOneUser({email});
             if (user) {
                 return next(new CustomError(`User with email ${email} is exist`, 409));
             }
@@ -38,43 +37,41 @@ module.exports = {
 
     isUserValidForCreate: async (req, res, next) => {
         try {
-            const { name, email, age, password } = req.body;
+            const {error, value} = userValidator.newUserValidator.validate(req.body);
 
-            if (!age || !Number.isInteger(age) || age < 18) {
-                return next(new CustomError('Set valid age'));
+            if (error) {
+                return next(new CustomError(error.details[0].message));
             }
 
-            if (!name || name.length < 3) {
-                return next(new CustomError('Set valid name'));
-            }
-
-            if (!email || !email.includes('@')) {
-                return next(new CustomError('Set valid email'));
-            }
-
-            if (!password || name.password < 8) {
-                return next(new CustomError('Set valid password'));
-            }
-
+            req.body = value;
             next();
         } catch (e) {
             next(e);
         }
     },
-
     isUserValidForUpdate: async (req, res, next) => {
         try {
-            const { name, age } = req.body;
+            const {error, value} = userValidator.newUserValidator.validate(req.body);
 
-            if (age && !Number.isInteger(age) || age < 18) {
-                return res.status(400).json('Set valid age');
+            if (error) {
+                return next(new CustomError(error.details[0].message));
             }
 
-            if (name && name.length < 3) {
-                return res.status(400).json('Set valid name');
+            req.body = value;
+            next();
+        } catch (e) {
+            next(e);
+        }
+    },
+    isUserQueryValid: async (req, res, next) => {
+        try {
+            const {error, value} = userQueryValidator.findAll.validate(req.query);
+
+            if (error) {
+                return next(new CustomError(error.details[0].message));
             }
 
-            req.dateForUpdate = { name, age };
+            req.query = value;
             next();
         } catch (e) {
             next(e);
